@@ -18,7 +18,7 @@ struct Car {
 
 struct Node {
 	Car car;
-	Node* next; 
+	Node* next;
 };
 
 void insertAtBeginning(Node** start, Car car) {
