@@ -31,7 +31,6 @@ void insertAtBeginning(Node** start, Car car) {
 	*start = newNode;
 }
 
-
 void insertAtPosition(Node** start, Car car, int position) {
 
 	Node* newNode = malloc(sizeof(Node));
