@@ -112,36 +112,30 @@ Car deleteFromEnd(Node** start) {
 	return deletedCar;
 }
 
-
-Car deleteFromPosition(Node** start, int position) {
-	Node* deleted = *start;
-	Car deletedCar;
-
+Car deleteFromPosition(Node** start, int poz) {
 	if (*start == NULL) {
 		printf("Lista este goala.\n");
-		return;
+		Car empty = { 0.00, NULL, 0.00 };
+		return empty;
 	}
-
-	if (position == 0) {
-		*start = deleted->next;
-		deletedCar = deleted->car;
-		free(deleted);
+	if (poz == 0) {
+		return deleteFromBeginning(start);
 	}
-	else {
-		Node* prev = NULL;
-		for (int i = 0; deleted->next != NULL && i < position; i++) {
-			prev = deleted;
-			deleted = deleted->next;
-		}
-		if (deleted == NULL) {
-			printf("Pozitia nu este valida.\n");
-			return;
-		}
-		prev->next = deleted->next;
-		deletedCar = deleted->car;
-		free(deleted);
-		return deletedCar;
+	Node* temp = *start;
+	Node* aux = NULL;
+	for (int i = 0 ; temp != NULL && i < poz ; i++) {
+		aux = temp;
+		temp = temp->next;
 	}
+	if (temp == NULL) {
+		printf("Pozitia nu este valida.\n");
+		Car empty = { 0.00, NULL, 0.00 };
+		return empty;
+	}
+	aux->next = temp->next;
+	Car deletedCar = temp->car;
+	free(temp);
+	return deletedCar;
 }
 
 
@@ -234,7 +228,7 @@ int main() {
 
 	printf("-------------------\n");
 
-	Car deletedCar3 = deleteFromPosition(&list, 1);
+	Car deletedCar3 = deleteFromPosition(&list, 4);
 	parseListAndPrint(list);
 
 	printf("-------------------\n");
