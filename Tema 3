@@ -1,0 +1,134 @@
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <stdio.h>
+#include <malloc.h>
+#include <string.h>
+
+#define LINESIZE 128
+
+typedef struct Task Task;
+typedef struct Heap Heap;
+
+struct Task {
+	int priority;
+	char* description;
+};
+
+struct Heap {
+	Task* tasks;
+	int size;
+};
+
+void printTask(Task t) {
+	printf("Priority %d: %s\n", t.priority, t.description);
+}
+
+Heap initHeap() {
+	Heap heap;
+	heap.size = 0;
+	heap.tasks = malloc(heap.size * sizeof(Task));
+	return heap;
+}
+
+void swapTask(Task* t1, Task* t2) {
+	Task aux = *t1;
+	*t1 = *t2;
+	*t2 = aux;
+}
+
+void insertHeap(Heap* heap, Task task) {
+	heap->size += 1;
+	heap->tasks = realloc(heap->tasks, heap->size * sizeof(Task));
+
+	int index_element = heap->size - 1;
+	heap->tasks[index_element] = task;
+
+	int index_parinte = (index_element - 1) / 2;
+	while (heap->tasks[index_element].priority > heap->tasks[index_parinte].priority) {
+		swapTask(&heap->tasks[index_element], &heap->tasks[index_parinte]);
+		index_element = index_parinte;
+		index_parinte = (index_element - 1) / 2;
+	}
+}
+
+void heapify(Heap heap, int index) {
+	int largest = index;
+	int left = 2 * index + 1;
+	int right = 2 * index + 2;
+
+	if (left<heap.size && heap.tasks[left].priority>heap.tasks[largest].priority) {
+		largest = left;
+	}
+
+	if (right<heap.size && heap.tasks[right].priority>heap.tasks[largest].priority) {
+		largest = right;
+	}
+
+	if (largest != index) {
+		swapTask(&heap.tasks[largest], &heap.tasks[index]);
+		heapify(heap, largest);
+	}
+}
+
+Heap buildHeap(Task* tasks, int size) {
+	Heap heap;
+	heap.size = size;
+	heap.tasks = malloc(heap.size * sizeof(Task));
+
+	for (int i = 0; i < heap.size; i++) {
+		heap.tasks[i] = tasks[i];
+	}
+
+	int start_index = heap.size / 2 - 1;
+
+	for (int i = start_index; i >= 0; i--) {
+		heapify(heap, i);
+	}
+
+	return heap;
+}
+
+Task readTaskFromFile(FILE* f) {
+	char buffer[LINESIZE];
+
+	fgets(buffer, LINESIZE, f);
+
+	char* token = strtok(buffer, ",");
+
+	Task t;
+	t.priority = atoi(token);
+
+	token = strtok(NULL, "\n");
+	t.description = malloc((strlen(token) + 1) * sizeof(char));
+	strcpy(t.description, token);
+
+	return t;
+}
+void readTasksFromFile(const char* fileName, Heap* heap) {
+	FILE* f;
+	f = fopen(fileName, "r");
+	while (!feof(f)) {
+		insertHeap(heap, readTaskFromFile(f));
+	}
+}
+
+void printHeap(Heap heap) {
+	for (int i = 0; i < heap.size; i++) {
+		printTask(heap.tasks[i]);
+	}
+}
+
+int main() {
+	Heap heap = initHeap();
+	readTasksFromFile("tasks.txt", &heap);
+	printHeap(heap);
+	printf("\n-----------------------\n");
+	Task tasks[6];
+	for (int i = 0; i < 6; i++) {
+		Task t = { .priority = i + 1, .description = "New Task" };
+		tasks[i] = t;
+	}
+	Heap heap2 = buildHeap(tasks, 6);
+	printHeap(heap2);
+	return 0;
+}
