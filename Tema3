@@ -88,6 +88,32 @@ Heap buildHeap(Task* tasks, int size) {
 	return heap;
 }
 
+void deleteAtIndex(Heap* heap, int index) {
+	if (heap->size <= 0 || index >= heap->size || index < 0) {
+		printf("Invalid index for deletion.\n");
+		return;
+	}
+
+	heap->tasks[index] = heap->tasks[heap->size - 1];
+	heap->size--;
+
+	heap->tasks = realloc(heap->tasks, heap->size * sizeof(Task));
+
+	if (index > 0 && heap->tasks[index].priority > heap->tasks[(index - 1) / 2].priority) {
+		int child = index;
+		int parent = (child - 1) / 2;
+		while (child > 0 && heap->tasks[child].priority > heap->tasks[parent].priority) {
+			swapTask(&heap->tasks[child], &heap->tasks[parent]);
+			child = parent;
+			parent = (child - 1) / 2;
+		}
+	}
+	else {
+		heapify(*heap, index);
+	}
+}
+
+
 Task readTaskFromFile(FILE* f) {
 	char buffer[LINESIZE];
 
@@ -122,13 +148,16 @@ int main() {
 	Heap heap = initHeap();
 	readTasksFromFile("tasks.txt", &heap);
 	printHeap(heap);
-	printf("\n-----------------------\n");
+	printf("\n--------------------\n");
 	Task tasks[6];
 	for (int i = 0; i < 6; i++) {
 		Task t = { .priority = i + 1, .description = "New Task" };
 		tasks[i] = t;
 	}
 	Heap heap2 = buildHeap(tasks, 6);
+	printHeap(heap2);
+	printf("\n-----Stergere element de pe pozitia 2-----\n");
+	deleteAtIndex(&heap2, 2);
 	printHeap(heap2);
 	return 0;
 }
