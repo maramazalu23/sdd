@@ -126,7 +126,6 @@ Car deleteFromEnd(DLList* list) {
 
 
 // TODO
-// Match condition and delete
 void deleteCarByYear(DLList* list, int year) {
 	if (list->start != NULL) {
 		Node* toBeDeleted = NULL;
