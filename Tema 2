@@ -88,6 +88,7 @@ Heap buildHeap(Task* tasks, int size) {
 	return heap;
 }
 
+//TODO
 void deleteAtIndex(Heap* heap, int index) {
 	if (heap->size <= 0 || index >= heap->size || index < 0) {
 		printf("Invalid index for deletion.\n");
