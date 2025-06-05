@@ -89,6 +89,17 @@ Heap buildHeap(Task* tasks, int size) {
 }
 
 //TODO
+void deleteHeap(Heap* heap) {
+    if (heap->tasks != NULL) {
+        for (int i = 0; i < heap->size; i++) {
+            free(heap->tasks[i].description);
+        }
+        free(heap->tasks);
+        heap->tasks = NULL;
+        heap->size = 0;
+    }
+}
+
 void deleteAtIndex(Heap* heap, int index) {
 	if (heap->size <= 0 || index >= heap->size || index < 0) {
 		printf("Invalid index for deletion.\n");
@@ -114,7 +125,6 @@ void deleteAtIndex(Heap* heap, int index) {
 	}
 }
 
-
 Task readTaskFromFile(FILE* f) {
 	char buffer[LINESIZE];
 
@@ -131,6 +141,7 @@ Task readTaskFromFile(FILE* f) {
 
 	return t;
 }
+
 void readTasksFromFile(const char* fileName, Heap* heap) {
 	FILE* f;
 	f = fopen(fileName, "r");
@@ -160,5 +171,6 @@ int main() {
 	printf("\n-----Stergere element de pe pozitia 2-----\n");
 	deleteAtIndex(&heap2, 2);
 	printHeap(heap2);
+	deleteHeap(&heap2);
 	return 0;
 }
